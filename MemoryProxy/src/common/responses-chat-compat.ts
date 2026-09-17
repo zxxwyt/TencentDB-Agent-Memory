@@ -136,11 +136,14 @@ export function responsesBodyToChat(
   const instructions = typeof body.instructions === "string" ? body.instructions : "";
 
   const rawInput = body.input;
-  const inputItems: unknown[] = Array.isArray(rawInput)
-    ? rawInput
-    : rawInput && typeof rawInput === "object"
-      ? [rawInput]
-      : [];
+  // Responses accepts a string as shorthand for a user message.
+  const inputItems: unknown[] = typeof rawInput === "string"
+    ? [{ type: "message", role: "user", content: rawInput }]
+    : Array.isArray(rawInput)
+      ? rawInput
+      : rawInput && typeof rawInput === "object"
+        ? [rawInput]
+        : [];
 
   const messages: ChatMessage[] = [];
   if (instructions.length > 0) messages.push({ role: "system", content: instructions });
